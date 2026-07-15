@@ -1,0 +1,6 @@
+Welcome to the Hybrid FTP Server!
+
+This server uses a TCP control channel with a custom
+Reliable UDP data channel (Selective Repeat).
+
+Test files can be placed in this directory.
