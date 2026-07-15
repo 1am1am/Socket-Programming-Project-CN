@@ -1,0 +1,45 @@
+\section{Thiết kế giao thức Reliable UDP}
+
+\subsection{Bắt tay và nhận diện phiên}
+Sau khi nhận \texttt{TRANSFER\_ID} từ TCP, initiator gửi SYN với \texttt{sequence=0}. 
+Responder chỉ chấp nhận SYN khi ID đúng và địa chỉ peer phù hợp, sau đó gửi SYN|ACK. 
+Initiator retry SYN tối đa \texttt{max\_retries+1} lần; RTO được nhân đôi đến tối đa 3 giây. 
+Điều này tạo một phiên UDP logic dù UDP không có kết nối.
+
+\subsection{Selective Repeat}
+Máy gửi chia nguồn thành đoạn tối đa 1200 byte và gán sequence từ 1. 
+Bảng \texttt{outstanding} giữ riêng từng gói chưa ACK. 
+Máy nhận giữ \texttt{reorder\_buffer}; gói trong cửa sổ được lưu theo sequence, còn dải liên tiếp mới được ghi xuống sink. 
+ACK xác nhận đúng sequence đã nhận, kể cả gói đến trễ/đến lặp. Khi timeout, máy gửi retransmit \emph{chỉ} gói đã hết hạn, không phát lại toàn bộ cửa sổ như Go-Back-N.
+
+\subsection{Cửa sổ và chống tắc nghẽn}
+Kích thước gửi mới bị giới hạn bởi:
+\[
+W=\min(\max(1,\lfloor cwnd\rfloor), peer\_window, max\_cwnd).
+\]
+Phía nhận quảng bá \texttt{rwnd=receive\_window-|reorder\_buffer|}. 
+Khi \texttt{rwnd=0}, phía gửi dừng DATA mới và phát \texttt{PROBE} mỗi 0.50 giây. 
+Cấu hình mặc định là \texttt{cwnd=1}, \texttt{ssthresh=16}, \texttt{max\_cwnd=64}, \texttt{receive\_window=64}.
+
+ACK mới tăng \texttt{cwnd} thêm 1 dưới \texttt{ssthresh} (slow start), hoặc thêm $1/cwnd$ trên ngưỡng (congestion avoidance). 
+Timeout đặt \texttt{ssthresh=max(2,cwnd/2)} và \texttt{cwnd=1}. 
+RTO dùng SRTT/RTTVAR có cận 0.10--3.00 giây; mẫu RTT chỉ lấy từ gói chưa retransmit.
+
+\subsection{Toàn vẹn và hoàn tất}
+CRC32 phát hiện lỗi từng datagram. 
+Hash SHA-256 giải quyết toàn vẹn end-to-end: phía gửi hash trước tệp rồi hash lại khi đọc; FIN mang số byte và digest. 
+Phía nhận hash dữ liệu đã ghi, so sánh hai giá trị, flush sink và chỉ \texttt{os.replace()} tệp tạm khi hợp lệ. 
+RESULT có cấu trúc \texttt{BQ32s}: trạng thái 1 byte, số byte 8 byte, digest 32 byte. 
+FIN|ACK|RESULT được xác nhận bằng ACK|RESULT và phía nhận linger để xử lý FIN lặp.
+
+\begin{table}[H]\centering\small
+\begin{tabular}{|p{3cm}|p{3cm}|p{7cm}|}\hline
+\textbf{Trạng thái}&\textbf{Chuyển tiếp}&\textbf{Điều kiện}\
+\\hline
+\texttt{CLOSED}&\texttt{SYN\_SENT}/\texttt{SYN\_RECEIVED}&Khởi tạo hoặc nhận SYN hợp lệ.\\\hline
+\texttt{ESTABLISHED}&\texttt{SENDING}/\texttt{RECEIVING}&Gọi \texttt{send\_*} hoặc \texttt{receive\_*}.\\\hline
+\texttt{SENDING}&\texttt{FIN\_WAIT}&Nguồn cạn và mọi DATA đã ACK.\\\hline
+\texttt{RECEIVING}&\texttt{LINGER}&Nhận FIN đúng sequence và gửi RESULT.\\\hline
+\texttt{FIN\_WAIT}/\texttt{LINGER}&\texttt{COMPLETE}&Kết quả/ACK cuối hợp lệ.\\\hline
+Mọi trạng thái&\texttt{FAILED}/\texttt{ABORTED}&Hết retry, idle timeout, lỗi giao thức, hash sai hoặc ABORT.\\\hline
+\end{tabular}\caption{Các trạng thái RDT được dùng trong mã}\end{table}

@@ -1,0 +1,30 @@
+\documentclass[12pt, a4paper]{article}
+\input{preamble.tex}
+
+\begin{document}
+    \input{content/title.tex}
+    \newpage 
+    \renewcommand{\contentsname}{Table of Contents}
+    \renewcommand{\refname}{References}
+    \renewcommand{\bibname}{References}
+    \tableofcontents
+    \newpage
+    \setcounter{section}{0}
+    \renewcommand{\thesection}{\arabic{section}}
+    \input{content/group-information.tex}
+    \newpage
+    \input{content/problem-statement.tex}
+    \newpage
+    \input{content/system-architecture.tex}
+    \newpage
+    \input{content/rdt-protocol-design.tex}
+    \newpage
+    \input{content/implementation-workflows.tex}
+    \newpage
+    \input{content/experimental-results.tex}
+    \newpage
+    \input{content/genai-appendix.tex}
+    \newpage
+    %\input{content/reference.tex}
+    %\newpage
+\end{document}

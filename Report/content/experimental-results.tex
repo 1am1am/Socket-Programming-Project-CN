@@ -1,0 +1,23 @@
+\section{Kết quả thực nghiệm và bằng chứng demo}
+
+\noindent Mỗi khung dưới đây phải được thay bằng ảnh chụp/log thật của lần chạy cuối. Không dùng ảnh minh họa hoặc ảnh từ máy khác không có log của nhóm.
+
+\newcommand{\evidencebox}[2]{\begin{figure}[H]\centering\fbox{\parbox[c][4.5cm][c]{.86\textwidth}{\centering\textbf{#1}\\[.3cm]#2\\[.4cm]\texttt{\% \textbackslash includegraphics[width=.86\textbackslash textwidth]\{figures/...png\}}}}\caption{#1}\end{figure}}
+
+\evidencebox{Đăng nhập và upload}{Hiển thị 220, USER/PASS, 150, thống kê RDT và 226 có SHA256/BYTES.}
+\evidencebox{Download và đối chiếu hash}{Hiển thị RETR, hash phía khách, HASH phía server và digest trùng khớp.}
+\evidencebox{Tệp nhị phân}{Ca \texttt{test\_binary\_integrity}: upload, HASH server, download và so sánh byte-for-byte.}
+\evidencebox{PASV và PORT}{Hiển thị 227 + transfer PASV, sau đó PORT + transfer active thành công.}
+\evidencebox{Nhiều khách đồng thời}{Log server có nhiều thread \texttt{client-IP:port} và kết quả \texttt{4 concurrent clients}.}
+\evidencebox{Kết quả test khói}{Ảnh terminal cuối \texttt{test\_smoke.py}, gồm tổng PASS/FAIL.}
+
+\begin{table}[H]\centering\small
+\begin{tabular}{|p{4cm}|p{5.5cm}|p{2cm}|}\hline
+\textbf{Ca}&\textbf{Tiêu chí quan sát}&\textbf{Kết quả cuối}\
+\\hline
+Authentication&Admin/anonymous hợp lệ; sai user/password và lệnh trước login bị từ chối.&\textit{[PASS/FAIL]}\\\hline
+Directory&Navigation, nested directory, traversal confinement.&\textit{[PASS/FAIL]}\\\hline
+PASV/PORT&LIST, STOR, RETR thành công ở cả hai mode.&\textit{[PASS/FAIL]}\\\hline
+Integrity&Hash SHA-256 và bytes khớp cho tệp binary.&\textit{[PASS/FAIL]}\\\hline
+Concurrency&Bốn khách PWD/LIST độc lập.&\textit{[PASS/FAIL]}\\\hline
+\end{tabular}\caption{Bảng kết quả cần cập nhật từ lần chạy thực}\end{table}

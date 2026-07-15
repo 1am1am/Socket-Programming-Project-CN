@@ -1,0 +1,35 @@
+\section{Ma trận phân công công việc và đánh giá đồng đẳng}
+
+\noindent\textbf{Nhóm 06 -- AE Siu Nhân}\\
+\textit{Các ô trong ngoặc vuông phải được thay bằng thông tin thật trước khi nộp.}
+
+\begin{table}[H]
+\centering\small
+\renewcommand{\arraystretch}{1.35}
+\begin{tabular}{|p{.7cm}|p{2.8cm}|p{1.8cm}|p{6.7cm}|p{1.1cm}|}
+\hline
+\textbf{STT}&\textbf{Họ và tên}&\textbf{MSSV}&\textbf{Mô-đun sở hữu và trách nhiệm}&\textbf{Tỷ lệ}\\\hline
+1&\textit{[Thành viên 01]}&\textit{[MSSV]}&Kiến trúc máy chủ trong \texttt{server.py}: TCP listener, tạo một thread cho mỗi khách, \texttt{ClientSession}, xác thực, dispatcher, sandbox đường dẫn, các lệnh FTP và kiểm thử nhiều khách.&34\%\\\hline
+2&\textit{[Thành viên 02]}&\textit{[MSSV]}&Lớp Reliable UDP trong \texttt{rdt\_udp.py}: định dạng gói, bắt tay, Selective Repeat, ACK, timeout/truyền lại, kết thúc FIN/RESULT, CRC32 và SHA-256.&33\%\\\hline
+3&\textit{[Thành viên 03]}&\textit{[MSSV]}&Khách trong \texttt{client.py} và tiện ích \texttt{utils.py}: CLI, PORT/PASV, mã phản hồi, thống kê truyền, kiểm thử khói, chụp minh chứng và tích hợp báo cáo.&33\%\\\hline
+\multicolumn{4}{|r|}{\textbf{Tổng cộng}}&\textbf{100\%}\\\hline
+\end{tabular}
+\caption{Phân công theo mô-đun có thể kiểm chứng khi vấn đáp}
+\label{tab:task-matrix}
+\end{table}
+
+\subsection{Cam kết đánh giá đồng đẳng}
+
+Ba thành viên thống nhất rằng tỷ lệ trên phản ánh trách nhiệm sở hữu, mức độ tích hợp, kiểm thử và khả năng bảo vệ trực tiếp, không chỉ số dòng mã. Mỗi người phải có thể mở đúng mô-đun của mình, giải thích luồng chạy, chỉ ra tình huống lỗi và sửa một thay đổi nhỏ khi được yêu cầu.
+
+\begin{table}[H]
+\centering\small
+\begin{tabular}{|p{3cm}|p{2cm}|p{8cm}|}\hline
+\textbf{Thành viên}&\textbf{Tự đánh giá}&\textbf{Nhận xét đồng đẳng}\
+\\hline
+Hứa Minh Khang&\textit{[Điền]}&Chịu trách nhiệm chứng minh cô lập phiên, luồng lệnh TCP, các mã phản hồi và an toàn đường dẫn.\\\hline
+Đặng Bá Lâm&\textit{[Điền]}&Chịu trách nhiệm chứng minh từng trường header, SR, \texttt{cwnd}/\texttt{ssthresh}/\texttt{rwnd}, RTO và hash đầu cuối.\\\hline
+Trịnh Bảo Khôi&\textit{[Điền]}&Chịu trách nhiệm chứng minh hành vi CLI, hai chế độ dữ liệu, kết quả \texttt{test\_smoke.py} và bằng chứng demo.\\\hline
+\end{tabular}
+\caption{Đánh giá đồng đẳng cần được nhóm xác nhận trước khi nộp}
+\end{table}

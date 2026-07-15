@@ -1,0 +1,58 @@
+\section{Kiến trúc hệ thống và cấu trúc dữ liệu}
+
+\subsection{Phân lớp}
+\begin{figure}[H]\centering
+\fbox{\begin{minipage}{0.86\textwidth}\centering
+\textbf{CLI khách / Server session}\\[.25cm]
+Lệnh FTP, phản hồi ba chữ số, xác thực, thư mục, PORT/PASV\\[.25cm]
+\rule{0.72\textwidth}{0.35pt}\\[.25cm]
+\textbf{TCP control channel} -- dòng UTF-8 kết thúc CRLF\\[.25cm]
+\rule{0.72\textwidth}{0.35pt}\\[.25cm]
+\textbf{Reliable UDP application layer} -- header 30 byte, SR, flow/congestion control, integrity\\[.25cm]
+\rule{0.72\textwidth}{0.35pt}\\[.25cm]
+\textbf{Python socket: TCP/UDP} \quad $\rightarrow$ \quad IP
+\end{minipage}}
+\caption{Tách control plane và data plane của Hybrid FTP}\label{fig:architecture}
+\end{figure}
+
+\subsection{Thông điệp điều khiển TCP}
+\texttt{ControlChannel} không tự định nghĩa TCP header. 
+Nó đóng khung dữ liệu ứng dụng theo dòng UTF-8: lệnh là \texttt{COMMAND [arguments]\textbackslash r\textbackslash n}, phản hồi là \texttt{DDD message\textbackslash r\textbackslash n}; mỗi dòng tối đa 8192 byte. 
+Ví dụ, \texttt{150 Opening data channel. 
+TRANSFER\_ID=id} liên kết lệnh TCP với phiên UDP, còn \texttt{226 Transfer complete. SHA256=hex BYTES=n} công bố kết quả.
+
+\subsection{Trạng thái phiên}
+\texttt{ClientSession} gồm \texttt{username}, \texttt{authenticated}, \texttt{cwd}, \texttt{transfer\_type}, \texttt{data\_mode}, \texttt{port\_addr}, \texttt{pasv\_udp\_sock}, \texttt{rename\_from} và \texttt{abort\_event}. 
+\texttt{RDTSession} giữ socket, peer, \texttt{transfer\_id}, trạng thái, bộ đếm gói, \texttt{cwnd}, \texttt{ssthresh}, RTO và \texttt{peer\_window}. 
+Các đối tượng này không được chia sẻ giữa hai phiên khách.
+
+\subsection{Định dạng header RDT theo byte}
+Header dùng \texttt{!4sBBQIIHHI}: big-endian, không padding, cố định 30 byte. 
+Payload tối đa 1200 byte và toàn bộ datagram tối đa 1230 byte.
+\begin{table}[H]\centering\small\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|c|c|c|p{2.3cm}|p{6.0cm}|}\hline
+\textbf{Byte}&\textbf{Bit}&\textbf{Kích thước}&\textbf{Trường}&\textbf{Diễn giải}\\\hline
+0--3&0--31&4&\texttt{MAGIC}&\texttt{RDT1}; loại datagram không thuộc RDT.\\\hline
+4&32--39&1&\texttt{VERSION}&Giá trị 1.\\\hline
+5&40--47&1&\texttt{flags}&Bitmap loại gói.\\\hline
+6--13&48--111&8&\texttt{transfer\_id}&ID ngẫu nhiên 64 bit, khác 0.\\\hline
+14--17&112--143&4&\texttt{sequence}&DATA/FIN bắt đầu từ 1; bắt tay dùng 0.\\\hline
+18--21&144--175&4&\texttt{acknowledgment}&Số DATA được ACK; \texttt{0xFFFFFFFF} là không ACK.\\\hline
+22--23&176--191&2&\texttt{rwnd}&Số slot nhận còn trống, đơn vị gói.\\\hline
+24--25&192--207&2&\texttt{payload\_length}&0--1200; phải khớp độ dài datagram.\\\hline
+26--29&208--239&4&\texttt{checksum}&CRC32(header với checksum bằng 0 $\|$ payload).\\\hline
+30--&240--&0--1200&payload&Dữ liệu, metadata FIN, RESULT hoặc lý do ABORT.\\\hline
+\end{tabular}\caption{Header Reliable UDP đến mức byte/bit}\label{tab:rdt-header}\end{table}
+
+\begin{table}[H]\centering\small
+\begin{tabular}{|c|c|p{8.5cm}|}\hline
+\textbf{Bit}&\textbf{Cờ}&\textbf{Ý nghĩa}\\\hline
+0&\texttt{0x01 SYN}&Yêu cầu bắt tay: \texttt{seq=0}, \texttt{ack=NO\_ACK}.\\\hline
+1&\texttt{0x02 ACK}&ACK DATA; kết hợp SYN hoặc RESULT cho điều khiển.\\\hline
+2&\texttt{0x04 DATA}&Payload dữ liệu, không được rỗng.\\\hline
+3&\texttt{0x08 FIN}&Kết thúc, payload là \texttt{Q32s}: số byte và SHA-256.\\\hline
+4&\texttt{0x10 ABORT}&Dừng phiên, mang lý do UTF-8.\\\hline
+5&\texttt{0x20 RESULT}&Kết hợp FIN|ACK|RESULT hoặc ACK|RESULT.\\\hline
+6&\texttt{0x40 PROBE}&Thăm dò cửa sổ bằng không.\\\hline
+7&\texttt{0x80}&Không hợp lệ; decoder loại bỏ.\\\hline
+\end{tabular}\caption{Flags của RDT}\label{tab:rdt-flags}\end{table}

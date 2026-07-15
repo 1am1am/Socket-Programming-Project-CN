@@ -1,0 +1,28 @@
+\babel@toc {english}{}\relax 
+\contentsline {section}{\numberline {1}Ma trận phân công công việc và đánh giá đồng đẳng}{2}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Cam kết đánh giá đồng đẳng}{2}{subsection.1.1}%
+\contentsline {section}{\numberline {2}Bài toán, kịch bản ứng dụng và tương tác giao thức}{3}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Bài toán}{3}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Vòng đời đầy đủ của phiên}{3}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Liên hệ yêu cầu và mã nguồn}{4}{subsection.2.3}%
+\contentsline {section}{\numberline {3}Kiến trúc hệ thống và cấu trúc dữ liệu}{5}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Phân lớp}{5}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Thông điệp điều khiển TCP}{5}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Trạng thái phiên}{5}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Định dạng header RDT theo byte}{5}{subsection.3.4}%
+\contentsline {section}{\numberline {4}Thiết kế giao thức Reliable UDP}{7}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Bắt tay và nhận diện phiên}{7}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Selective Repeat}{7}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Cửa sổ và chống tắc nghẽn}{7}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Toàn vẹn và hoàn tất}{7}{subsection.4.4}%
+\contentsline {section}{\numberline {5}Quy trình hiện thực và vận hành}{8}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Phân phối lệnh và concurrency}{8}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}PORT và PASV}{8}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Các workflow dữ liệu}{8}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Điểm cần nắm khi bảo vệ}{8}{subsection.5.4}%
+\contentsline {section}{\numberline {6}Kết quả thực nghiệm và bằng chứng demo}{9}{section.6}%
+\contentsline {section}{\numberline {A}Nhật ký GenAI và phản biện đầu ra}{12}{appendix.A}%
+\contentsline {subsection}{\numberline {A.1}Prompt đã sử dụng}{12}{subsection.A.1}%
+\contentsline {subsection}{\numberline {A.2}Đầu ra thô}{12}{subsection.A.2}%
+\contentsline {subsection}{\numberline {A.3}Audit kỹ thuật và refinement}{12}{subsection.A.3}%
+\contentsline {subsection}{\numberline {A.4}Kết luận sở hữu mã}{12}{subsection.A.4}%

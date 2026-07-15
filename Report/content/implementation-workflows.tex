@@ -1,0 +1,36 @@
+\section{Quy trình hiện thực và vận hành}
+
+\subsection{Phân phối lệnh và concurrency}
+Máy chủ chạy \texttt{accept()} trong vòng lặp. \cite{knuth1998sorting} %cite example
+Mỗi TCP client được gán một thread daemon gọi \texttt{ClientSession.run()}. 
+Vòng lặp phiên gửi \texttt{220}, nhận từng dòng, kiểm tra đăng nhập, tìm handler có tên \texttt{cmd\_<COMMAND>}, rồi trả \texttt{500}, \texttt{501}, \texttt{530}, \texttt{550} hoặc mã thành công phù hợp. 
+Các trường phiên là private cho thread đó.
+
+\begin{figure}[H]\centering
+\fbox{\parbox{.84\textwidth}{\centering
+\texttt{accept()} $\rightarrow$ tạo thread $\rightarrow$ \texttt{ClientSession} $\rightarrow$ gửi 220 $\rightarrow$ đọc CRLF $\rightarrow$ kiểm tra auth $\rightarrow$ dispatch handler $\rightarrow$ trả FTP code $\rightarrow$ lặp hoặc đóng}}
+\caption{Luồng dispatch trên mỗi phiên TCP}\end{figure}
+
+\subsection{PORT và PASV}
+Trong PASV, \texttt{cmd\_PASV} tạo UDP socket của server tại cổng 0 và trả \texttt{227}. 
+Sau \texttt{150}, khách gửi SYN tới socket này; server responder chỉ chấp nhận IP TCP client. 
+Trong PORT, khách gắn UDP socket, gửi sáu octet địa chỉ; server lưu \texttt{port\_addr}, tạo socket UDP mới khi truyền và là initiator. 
+Socket dữ liệu được đóng sau mỗi transfer; PASV/PORT mới cũng đóng socket PASV cũ.
+
+\subsection{Các workflow dữ liệu}
+\begin{enumerate}
+\item \textbf{LIST/NLST}: server tạo bytes UTF-8 từ thư mục, mở RDT rồi gọi \texttt{send\_bytes()}.
+\item \textbf{RETR}: server kiểm tra tệp, gọi \texttt{send\_file()}; client gọi \texttt{receive\_file()} vào tệp tạm.
+\item \textbf{STOR/STOU}: client gửi file bằng \texttt{send\_file()}; server gọi \texttt{receive\_file()}, thay tệp đích nguyên tử sau khi hash hợp lệ.
+\item \textbf{APPE}: nếu tệp đích đã tồn tại, server nhận bytes vào bộ nhớ rồi mở tệp ở mode \texttt{ab}; nếu chưa có, dùng luồng nhận tệp thông thường.
+\end{enumerate}
+
+\subsection{Điểm cần nắm khi bảo vệ}
+\begin{itemize}
+\item \texttt{TYPE A/I} chỉ lưu trạng thái và báo phản hồi; payload thực tế vẫn được xử lý ở dạng bytes, nên binary được bảo toàn.
+\item \texttt{MODE} hiện chỉ chấp nhận \texttt{S}; không tuyên bố hỗ trợ Block hoặc Compressed.
+\item \texttt{ABOR} có \texttt{abort\_event}, nhưng command loop của một phiên chạy đồng bộ với data handler. 
+Vì vậy ABOR từ chính control socket không được đọc giữa lúc transfer đang block. 
+Đây là hạn chế phải trình bày trung thực; hướng nâng cấp là luồng đọc control riêng hoặc multiplexing.
+\item \texttt{test\_smoke.py} chứng minh nhiều hành vi, nhưng một lần chạy PASS không thay thế việc giải thích cơ chế tại viva.
+\end{itemize}

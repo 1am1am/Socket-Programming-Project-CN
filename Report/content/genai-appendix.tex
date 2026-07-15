@@ -1,0 +1,31 @@
+\appendix
+\section{Nhật ký GenAI và phản biện đầu ra}
+
+\textbf{Yêu cầu trung thực:} phần này là khung mẫu. 
+Nhóm phải thay prompt và raw output bằng bản ghi chính xác của chính nhóm; không được gắn nhãn một nội dung tái tạo là ``đầu ra thô''.
+
+\subsection{Prompt đã sử dụng}
+\begin{quote}\small\ttfamily
+[Dán nguyên văn prompt thực tế, gồm bối cảnh, ràng buộc và câu hỏi.]
+\end{quote}
+
+\subsection{Đầu ra thô}
+\begin{quote}\small
+[Dán nguyên văn output chưa chỉnh sửa; có thể rút gọn phần không liên quan, nhưng phải ghi rõ phần đã lược.] 
+\end{quote}
+
+\subsection{Audit kỹ thuật và refinement}
+\begin{table}[H]\centering\small
+\begin{tabular}{|p{3.2cm}|p{4.2cm}|p{5.1cm}|}\hline
+\textbf{Gợi ý AI}&\textbf{Vấn đề/rủi ro}&\textbf{Quyết định của nhóm và bằng chứng mã}\
+\\hline
+ACK cộng dồn hoặc retransmit cả cửa sổ&Không mô tả đúng SR; lãng phí băng thông.&Nhóm dùng ACK theo sequence và \texttt{outstanding}; timeout chỉ retransmit gói hết hạn.\\\hline
+FIN đơn giản&Không đủ xác nhận digest, không xử lý mất kết quả.&FIN chứa \texttt{Q32s}; RESULT là \texttt{BQ32s}; có ACK|RESULT và linger.\\\hline
+Chỉ nói ``dùng checksum''&Không phân biệt hỏng datagram và toàn vẹn tệp.&CRC32 cho packet; SHA-256 + số byte end-to-end; commit tệp sau verify.\\\hline
+Không nói zero window&Có thể deadlock khi receiver quảng bá 0.&\texttt{PROBE} định kỳ và ACK mang \texttt{rwnd}.\\\hline
+\end{tabular}\caption{Ví dụ về phản biện phải được đối chiếu với prompt/output thật}\end{table}
+
+\subsection{Kết luận sở hữu mã}
+Nhóm đã rà lại từng đề xuất trước khi tích hợp: định dạng \texttt{HEADER}, xử lý \texttt{send\_stream}/\texttt{receive\_stream}, hàm tăng/giảm cửa sổ và FIN/RESULT. 
+Nhóm cũng ghi nhận giới hạn ABOR đồng thời thay vì tuyên bố một tính năng không được chứng minh bởi luồng thực thi hiện tại. 
+Mỗi thành viên cam kết có thể giải thích phần mã mình sở hữu trong vấn đáp.

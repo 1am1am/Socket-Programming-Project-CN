@@ -1,0 +1,42 @@
+\section{Bài toán, kịch bản ứng dụng và tương tác giao thức}
+
+\subsection{Bài toán}
+Hệ thống hiện thực một FTP lai: TCP duy trì mặt phẳng điều khiển, còn payload thực tế đi qua UDP với một giao thức độ tin cậy do nhóm tự xây dựng. 
+Đây không phải FTP chuẩn RFC 959 đầy đủ; các lệnh và mã trạng thái mô phỏng quy ước FTP, trong khi kênh dữ liệu là RDT tùy biến. 
+Cách tách này tận dụng tính có thứ tự của TCP cho xác thực/lệnh, đồng thời buộc ứng dụng tự xử lý mất gói, hỏng gói, trùng lặp và đảo thứ tự trên UDP.
+
+Máy chủ nghe TCP mặc định tại \texttt{127.0.0.1:2121}. 
+Mỗi kết nối nhận được tạo một \texttt{ClientSession} riêng, giữ thư mục hiện thời, trạng thái đăng nhập, kiểu truyền, chế độ dữ liệu và socket UDP của chính khách đó. 
+Các payload gồm danh sách thư mục và tệp nhị phân đều qua RDT; vì vậy \texttt{LIST}, \texttt{NLST}, \texttt{RETR}, \texttt{STOR}, \texttt{STOU} và \texttt{APPE} cùng được kiểm tra bởi cơ chế tin cậy.
+
+\subsection{Vòng đời đầy đủ của phiên}
+\begin{figure}[H]\centering\small
+\renewcommand{\arraystretch}{1.28}
+\begin{tabular}{r p{5.1cm} c p{5.1cm}}
+\textbf{Bước}&\multicolumn{1}{c}{\textbf{Khách}}&&\multicolumn{1}{c}{\textbf{Máy chủ}}\\\hline
+1&Mở TCP; nhận banner&&\texttt{accept()}, tạo thread; trả \texttt{220}.\\
+2&\texttt{USER}, \texttt{PASS}&$\longleftrightarrow$&Kiểm tra; trả \texttt{331}/\texttt{230}.\\
+3P&\texttt{PASV}&$\longrightarrow$&Gắn UDP cổng tạm; trả \texttt{227 (h1,h2,h3,h4,p1,p2)}.\\
+3A&Hoặc gắn UDP cục bộ, gửi \texttt{PORT ...}&$\longrightarrow$&Lưu địa chỉ UDP của khách; trả \texttt{200}.\\
+4&Gửi \texttt{RETR}, \texttt{STOR} hoặc \texttt{LIST}&$\longrightarrow$&Sinh ID 64 bit; trả \texttt{150 TRANSFER\_ID=id}.\\
+5P&SYN (khách là initiator)&$\longleftrightarrow$&SYN|ACK (máy chủ responder).\\
+5A&Chờ SYN (khách là responder)&$\longleftrightarrow$&SYN (máy chủ initiator), nhận SYN|ACK.\\
+6&DATA/ACK, SR, \texttt{rwnd}, timeout&$\longleftrightarrow$&DATA/ACK, SR, \texttt{rwnd}, timeout.\\
+7&FIN: số byte + SHA-256&$\longleftrightarrow$&FIN|ACK|RESULT: trạng thái + số byte + SHA-256.\\
+8&ACK|RESULT; nhận \texttt{226}&$\longleftrightarrow$&Đóng UDP phiên; trả \texttt{226 SHA256=... BYTES=...}.\\
+9&\texttt{QUIT}&$\longrightarrow$&Trả \texttt{221}, đóng phiên TCP.\\\hline
+\end{tabular}
+\caption{Trình tự TCP + UDP; P là PASV, A là PORT}
+\label{fig:lifecycle}
+\end{figure}
+
+\subsection{Liên hệ yêu cầu và mã nguồn}
+\begin{table}[H]\centering\small
+\begin{tabular}{|p{4.2cm}|p{7.7cm}|}\hline
+\textbf{Yêu cầu mức B/A}&\textbf{Bằng chứng trong hiện thực}\\\hline
+Tệp nhị phân, cây thư mục, PORT/PASV, đa khách&\texttt{TYPE I}; \texttt{safe\_resolve}; \texttt{LIST/NLST/MKD/RMD}; \texttt{cmd\_PORT}/\texttt{cmd\_PASV}; một daemon thread cho mỗi TCP client.\\\hline
+RDT tự cài đặt&\texttt{rdt\_udp.py} dùng duy nhất socket, \texttt{struct}, \texttt{zlib}, \texttt{hashlib}; không dùng FTP framework hay thư viện RDT ngoài.\\\hline
+ACK, sequence, timeout, retransmit&\texttt{outstanding} theo sequence; ACK riêng lẻ; RTO; truyền lại chỉ các gói hết hạn.\\\hline
+Điều khiển luồng/tắc nghẽn&\texttt{peer\_window}, \texttt{rwnd}, \texttt{PROBE}, \texttt{cwnd}, \texttt{ssthresh}.\\\hline
+Hash đầu cuối&FIN và RESULT mang byte count + SHA-256; file chỉ commit sau xác minh.\\\hline
+\end{tabular}\caption{Đối chiếu yêu cầu mức Good/Excellent với mã}\end{table}
