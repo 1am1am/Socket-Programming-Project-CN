@@ -435,6 +435,12 @@ INPUT content\experimental-results.tex
 INPUT .\content\genai-appendix.tex
 INPUT .\content\genai-appendix.tex
 INPUT content\genai-appendix.tex
+INPUT .\content\reference.tex
+INPUT .\content\reference.tex
+INPUT content\reference.tex
+INPUT .\main.bbl
+INPUT .\main.bbl
+INPUT main.bbl
 INPUT main.aux
 INPUT .\main.out
 INPUT .\main.out

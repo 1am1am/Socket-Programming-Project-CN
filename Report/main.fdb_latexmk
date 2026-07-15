@@ -1,5 +1,13 @@
 # Fdb version 4
-["pdflatex"] 1784137856.95325 "d:/HCMUS/NAM1/HK3/MMT/Project/Socket-Programming-Project-CN/Report/main.tex" "main.pdf" "main" 1784137858.43098 0
+["bibtex main"] 1784138112.95898 "main.aux" "main.bbl" "main" 1784138115.09685 0
+  "./bibliography/bibliography.bib" 1784137104 6756 dcec04900e5e31a4a404c1029c0ad294 ""
+  "C:/Program Files/MiKTeX/bibtex/bst/bibtex/plain.bst" 1291864736 20613 bd3fbfa9f64872b81ac57a0dd2ed855f ""
+  "main.aux" 1784138114 7322 3c8f469e04d7cf598b4e3f3671a043c0 "pdflatex"
+  (generated)
+  "main.bbl"
+  "main.blg"
+  (rewritten before read)
+["pdflatex"] 1784138113.16415 "d:/HCMUS/NAM1/HK3/MMT/Project/Socket-Programming-Project-CN/Report/main.tex" "main.pdf" "main" 1784138115.09722 0
   "C:/Program Files/MiKTeX/fonts/enc/dvips/cm-super/cm-super-ts1.enc" 1001775420 2900 1537cc8184ad1792082cd229ecc269f4 ""
   "C:/Program Files/MiKTeX/fonts/tfm/jknappen/ec/tcrm1200.tfm" 993062508 1444 95ffe0f19b974d50849790c8225c7ef7 ""
   "C:/Program Files/MiKTeX/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1233951848 1004 54797486969f23fa377b128694d548df ""
@@ -224,18 +232,20 @@
   "content/experimental-results.tex" 1784136526 2001 ed4c3440ede9c1abeb5609571dfaf7e6 ""
   "content/genai-appendix.tex" 1784137339 2238 c822e6e524612790510bebe069272885 ""
   "content/group-information.tex" 1784137373 2745 ce66c8f01a3478ebe81ffe8d0413bba3 ""
-  "content/implementation-workflows.tex" 1784137298 3041 0486b6ef5918127b1232ba6d73663118 ""
+  "content/implementation-workflows.tex" 1784138087 3042 c9a08fc5844d623f35c57ac4c97c3673 ""
   "content/problem-statement.tex" 1784137500 3813 a6d3d88fb2e0747133e178ac4547f831 ""
   "content/rdt-protocol-design.tex" 1784137500 3286 f2375f580d62a3b77853a653050bc157 ""
+  "content/reference.tex" 1773496983 90 f5cff3b0c5d1f7bf4229caf30ff79be0 ""
   "content/system-architecture.tex" 1784137559 4040 0ed0489056ea4e4e2048dfdd5d6c001c ""
   "content/title.tex" 1784137856 1399 bbfe17425cd17afecfef4ed84cc1d2e7 ""
-  "d:/HCMUS/NAM1/HK3/MMT/Project/Socket-Programming-Project-CN/Report/main.tex" 1784137132 853 312290652eb7f21105c171d88c3d46aa ""
+  "d:/HCMUS/NAM1/HK3/MMT/Project/Socket-Programming-Project-CN/Report/main.tex" 1784138108 851 7aaa6d4a25d306a2b9dba94148fc2396 ""
   "hcmus-report-template.sty" 1784136812 4757 ebd92f2c17f66633d60b58193d8c2c07 ""
   "img/hcmus-logo.png" 1773496983 258629 122747e63e393f11b7f15571540c7d20 ""
-  "main.aux" 1784137858 7128 0c8943a4d9e17ee000a985d9e58584d7 "pdflatex"
-  "main.out" 1784137858 5654 74404bbb8479d6fca9499ff94b5e8a66 "pdflatex"
-  "main.tex" 1784137132 853 312290652eb7f21105c171d88c3d46aa ""
-  "main.toc" 1784137858 2644 6f1957e4962c48613569d5ebd42da20a "pdflatex"
+  "main.aux" 1784138114 7322 3c8f469e04d7cf598b4e3f3671a043c0 "pdflatex"
+  "main.bbl" 1784138113 276 8a919fdf214f2c6e7a3ba149ac6af217 "bibtex main"
+  "main.out" 1784138114 5749 5ad3bde4d2a594f361e0fc9b25289a1d "pdflatex"
+  "main.tex" 1784138108 851 7aaa6d4a25d306a2b9dba94148fc2396 ""
+  "main.toc" 1784138114 2712 8baf50776530c23cb7a5e726ccf846e1 "pdflatex"
   "preamble.tex" 1784136819 503 cdf38ae60e2bf1900f7483b663546eb4 ""
   (generated)
   "main.aux"

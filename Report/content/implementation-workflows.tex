@@ -1,7 +1,7 @@
 \section{Quy trình hiện thực và vận hành}
 
 \subsection{Phân phối lệnh và concurrency}
-Máy chủ chạy \texttt{accept()} trong vòng lặp. \cite{knuth1998sorting} %cite example
+Máy chủ chạy \texttt{accept()} trong vòng lặp. \cite{sodhi2013enhanced} %cite example
 Mỗi TCP client được gán một thread daemon gọi \texttt{ClientSession.run()}. 
 Vòng lặp phiên gửi \texttt{220}, nhận từng dòng, kiểm tra đăng nhập, tìm handler có tên \texttt{cmd\_<COMMAND>}, rồi trả \texttt{500}, \texttt{501}, \texttt{530}, \texttt{550} hoặc mã thành công phù hợp. 
 Các trường phiên là private cho thread đó.

@@ -26,3 +26,4 @@
 \contentsline {subsection}{\numberline {A.2}Đầu ra thô}{12}{subsection.A.2}%
 \contentsline {subsection}{\numberline {A.3}Audit kỹ thuật và refinement}{12}{subsection.A.3}%
 \contentsline {subsection}{\numberline {A.4}Kết luận sở hữu mã}{12}{subsection.A.4}%
+\contentsline {section}{\numberline {B}References}{13}{appendix.B}%
